@@ -1,11 +1,15 @@
- package com.internProject.EMS.Repository;
+package com.internProject.EMS.Repository;
+
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.internProject.EMS.Model.Employee;
+
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee,Integer>{
 
-    
+    // ✅ FILTER METHOD
+   List<Employee> findByDesignationContainingIgnoreCase(String designation);
 }
