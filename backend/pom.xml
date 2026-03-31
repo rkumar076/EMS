@@ -43,7 +43,7 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+        <!-- export to pdf -->
       <dependency>
     <groupId>com.itextpdf</groupId>
     <artifactId>kernel</artifactId>
@@ -55,7 +55,12 @@
     <artifactId>layout</artifactId>
     <version>7.2.5</version>
 </dependency>
-
+      <!-- export to excel -->
+     <dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>5.2.5</version>
+</dependency>
 
         <!-- Lombok -->
         <dependency>

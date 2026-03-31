@@ -17,6 +17,10 @@ import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.*;
 import com.itextpdf.layout.element.*;
 
+   // exl Imports
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
@@ -111,4 +115,45 @@ public class EmployeeController {
         document.add(table);
         document.close();
     }
+    
+    
+
+
+@GetMapping("/excel")
+public void exportToExcel(HttpServletResponse response) throws Exception {
+
+    List<Employee> employees = employeeRepository.findAll();
+
+    Workbook workbook = new XSSFWorkbook();
+    Sheet sheet = workbook.createSheet("Employees");
+
+    // Header
+    Row headerRow = sheet.createRow(0);
+    String[] columns = {"ID", "Name", "Department", "Phone", "Personal Email", "Office Email"};
+
+    for (int i = 0; i < columns.length; i++) {
+        headerRow.createCell(i).setCellValue(columns[i]);
+    }
+
+    // Data
+    int rowNum = 1;
+    for (Employee emp : employees) {
+        Row row = sheet.createRow(rowNum++);
+
+        row.createCell(0).setCellValue(emp.getEmpId());
+        row.createCell(1).setCellValue(emp.getEmpName());
+        row.createCell(2).setCellValue(emp.getDesignation());
+        row.createCell(3).setCellValue(emp.getPhoneNo());
+        row.createCell(4).setCellValue(emp.getPersonalEmail());
+        row.createCell(5).setCellValue(emp.getOfficeEmail());
+    }
+
+    // 🔥 IMPORTANT (LAST में करना है)
+    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    response.setHeader("Content-Disposition", "attachment; filename=employees.xlsx");
+
+    workbook.write(response.getOutputStream());
+    workbook.close();
+}
+    
 }
