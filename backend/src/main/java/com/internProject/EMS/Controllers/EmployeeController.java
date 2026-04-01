@@ -94,7 +94,7 @@ public class EmployeeController {
         document.add(new Paragraph("Employee List\n\n"));
 
         // 🔥 Table (6 columns)
-        Table table = new Table(6);
+com.itextpdf.layout.element.Table table = new com.itextpdf.layout.element.Table(6);
 
         table.addCell("ID");
         table.addCell("Name");
@@ -117,7 +117,6 @@ public class EmployeeController {
     }
     
     
-
 
 @GetMapping("/excel")
 public void exportToExcel(HttpServletResponse response) throws Exception {
