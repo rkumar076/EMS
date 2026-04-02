@@ -1,0 +1,41 @@
+<div class="dashboard container">
+
+  <!-- 🏆 Employee of the Month -->
+  <div class="highlight">
+    <h2>🏆 Employee of the Month</h2>
+
+    <div class="highlight-card">
+      <img [src]="employeeOfMonth.image" alt="emp">
+
+      <div class="info">
+        <h3>{{employeeOfMonth.name}}</h3>
+        <p>ID: {{employeeOfMonth.id}}</p>
+        <p>Dept: {{employeeOfMonth.department}}</p>
+
+        <!-- Upload Button -->
+        <input type="file" (change)="onMonthImageUpload($event)">
+      </div>
+    </div>
+  </div>
+
+  <!-- 👥 Employee Grid -->
+  <div class="card-grid">
+    <div class="card" *ngFor="let emp of employees">
+
+      <img [src]="emp.image" alt="emp">
+
+      <!-- 🔥 FIXED HERE -->
+      <input type="file" (change)="onImageUpload($event, emp)">
+
+      <h4>{{emp.name}}</h4>
+      <p>{{emp.id}}</p>
+      <span class="dept">{{emp.department}}</span>
+
+      <button (click)="setEmployeeOfMonth(emp)">
+        Set as Month ⭐
+      </button>
+
+    </div>
+  </div>
+
+</div>

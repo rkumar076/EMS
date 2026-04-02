@@ -1,0 +1,34 @@
+<header class="header">
+  <div class="container header-content">
+
+    <!-- LEFT -->
+    <div class="left">
+      <div class="logo">EMS</div>
+      <div class="title">
+        <h3>Employee Management System</h3>
+        <p>Manage your workforce efficiently</p>
+      </div>
+    </div>
+
+    <!-- CENTER (🔥 hide on login/signup) -->
+    <nav class="nav" *ngIf="!isAuthPage()">
+      <!-- //<a routerLink="/dashboard">Dashboard</a> -->
+      <a routerLink="/employees">Employees</a>
+    </nav>
+
+    <!-- RIGHT (🔥 hide on login/signup) -->
+    <div class="right" *ngIf="!isAuthPage()">
+
+      <span class="admin" *ngIf="isLoggedIn()">👤 Admin</span>
+
+      <button 
+        *ngIf="isLoggedIn()" 
+        (click)="logout()" 
+        class="logout-btn">
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+</header>

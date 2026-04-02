@@ -16,8 +16,16 @@ public class Employee {
     private String phoneNo;
     private String personalEmail;
     private String officeEmail;
+    private String image;
 
     // 🔥 MUST: getters & setters manually
+    public String getImage() {
+    return image;
+}
+
+public void setImage(String image) {
+    this.image = image;
+}
 
     public int getEmpId() {
         return empId;

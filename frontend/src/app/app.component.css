@@ -1,0 +1,12 @@
+/* full page layout fix */
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 10px 0;
+}

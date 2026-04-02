@@ -2,9 +2,14 @@ package com.internProject.EMS.Controllers;
 
 import java.util.List;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.internProject.EMS.Model.Employee;
 import com.internProject.EMS.Repository.EmployeeRepository;
@@ -153,6 +158,36 @@ public void exportToExcel(HttpServletResponse response) throws Exception {
 
     workbook.write(response.getOutputStream());
     workbook.close();
+}
+
+
+@PostMapping("/upload/{id}")
+public Employee uploadImage(
+        @PathVariable int id,
+        @RequestParam("file") MultipartFile file) throws Exception {
+
+    Employee emp = employeeRepository.findById(id).orElseThrow();
+
+    String uploadDir = "uploads/";
+    File folder = new File(uploadDir);
+
+    if (!folder.exists()) {
+        folder.mkdir();
+    }
+
+    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+    Files.copy(
+        file.getInputStream(),
+        Paths.get(uploadDir + fileName),
+        java.nio.file.StandardCopyOption.REPLACE_EXISTING
+    );
+
+    String imageUrl = "http://localhost:8080/uploads/" + fileName;
+
+    emp.setImage(imageUrl);
+
+    return employeeRepository.save(emp);
 }
     
 }
