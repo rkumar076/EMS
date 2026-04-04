@@ -13,22 +13,17 @@ export class HeaderComponent {
 
   constructor(public router: Router) {}
 
- isLoggedIn(): boolean {
-  if (typeof window !== 'undefined' && localStorage) {
-    return localStorage.getItem('user') !== null;
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');   // ✅ token check
   }
-  return false;
-}
 
-  // 🔥 main logic
   isAuthPage(): boolean {
     return this.router.url === '/login' || this.router.url === '/signup';
   }
 
   logout() {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('user');
+    localStorage.removeItem('token');   // ✅ token remove
+    localStorage.removeItem('user');    // optional
+    this.router.navigate(['/login']);
   }
-  this.router.navigate(['/login']);
-}
 }

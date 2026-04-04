@@ -21,23 +21,26 @@ export class LoginComponent {
   ) {}
 
   onLogin() {
-    const data = {
-      email: this.email,
-      password: this.password
-    };
+  const data = {
+    email: this.email,
+    password: this.password
+  };
 
-    this.authService.login(data).subscribe({
-      next: (res) => {
-        console.log('Response:', res);
-        alert('Login Successful');
+  this.authService.login(data).subscribe({
+    next: (res) => {
+      console.log('Response:', res);
+      alert('Login Successful');
 
-        // 👉 redirect after login
-        this.router.navigate(['/employees']);
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Invalid Credentials');
-      }
-    });
-  }
+      // 🔥 IMPORTANT LINE
+      localStorage.setItem('token', 'true');   // ✅ temporary token
+
+      // 👉 redirect
+      this.router.navigate(['/employees']);
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Invalid Credentials');
+    }
+  });
+}
 }

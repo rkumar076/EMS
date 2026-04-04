@@ -1,15 +1,14 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './auth.guard';
 
 export const routes: Routes = [
 
-
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'employees',
     pathMatch: 'full'
   },
 
-  // 🔐 LOGIN
   {
     path: 'login',
     loadComponent: () =>
@@ -17,7 +16,6 @@ export const routes: Routes = [
         .then(m => m.LoginComponent)
   },
 
-  // 📝 SIGNUP
   {
     path: 'signup',
     loadComponent: () =>
@@ -25,26 +23,27 @@ export const routes: Routes = [
         .then(m => m.SignupComponent)
   },
 
-  // 🏠 DASHBOARD
+  // 🔒 PROTECTED
   {
     path: 'dashboard',
+    canActivate: [AuthGuard],   // ✅ yaha add karo
     loadComponent: () =>
       import('./features/dashboard/dashboard/dashboard.component')
         .then(m => m.DashboardComponent)
   },
 
-  // 👨‍💼 EMPLOYEES
+  // 🔒 PROTECTED
   {
     path: 'employees',
+    canActivate: [AuthGuard],   // ✅ yaha add karo
     loadComponent: () =>
       import('./features/employees/employee-list/employee-list.component')
         .then(m => m.EmployeeListComponent)
   },
 
-  // ❌ invalid URL → redirect
   {
     path: '**',
-    redirectTo: 'signup'
+    redirectTo: 'login'   // 👈 better than signup
   }
 
 ];
