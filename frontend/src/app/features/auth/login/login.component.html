@@ -1,15 +1,35 @@
-<div class="auth-container">
-  <h2>Login</h2>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>Welcome Back 👋</h2>
+    <p class="subtitle">Login to your account</p>
 
-  <form (ngSubmit)="onLogin()">
-    <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required />
-    <input type="password" [(ngModel)]="password" name="password" placeholder="Password" required />
+    <form (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
 
-    <button type="submit">Login</button>
-  </form>
+      <div class="form-group">
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
 
-  <p>
-    Don't have an account?
-    <a routerLink="/signup">Signup</a>
-  </p>
+      <button type="submit">Login</button>
+    </form>
+
+    <p class="footer-text">
+      Don't have an account?
+      <a routerLink="/signup">Signup</a>
+    </p>
+  </div>
 </div>

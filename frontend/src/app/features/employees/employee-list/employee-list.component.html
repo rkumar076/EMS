@@ -3,21 +3,39 @@
   <!-- 🔵 Sidebar -->
   <div class="sidebar">
     <h3>Filters</h3>
+
+    <!-- 🔥 STATUS FILTER -->
     <ul>
-      <li (click)="filterByDept('All')">All</li>
-      <li (click)="filterByDept('HR')">HR</li>
-      <li (click)="filterByDept('IT')">Developer</li>
-      <li (click)="filterByDept('Finance')">Designer</li>
-      <li (click)="filterByDept('Operations')">Manager</li>
-      <li (click)="filterByDept('Sales')">Sales</li>
-      <li (click)="filterByDept('Admin')">Admin</li>
+      <li (click)="loadAll()">All Employees</li>
+      <li (click)="loadActive()">Active Employees</li>
+      <li (click)="loadInactive()">Inactive Employees</li>
+    </ul>
+
+    <hr>
+
+    <!-- 🔥 DYNAMIC DEPARTMENT FILTER -->
+    <ul>
+      <li (click)="filterByDept('All')">All Dept</li>
+
+      <!-- 🔥 AUTO LOAD FROM DB -->
+      <li *ngFor="let dept of departments" (click)="filterByDept(dept)">
+        {{ dept }}
+      </li>
     </ul>
 
     <hr>
 
     <button (click)="openAdd()">Add Employee</button>
     <button (click)="openUpdate()">Update Employee</button>
-    <button (click)="deleteEmployee()">Delete Employee</button>
+
+    <!-- 🔥 DELETE / RESTORE -->
+    <button *ngIf="selectedEmployee?.isActive" (click)="deleteEmployee()">
+      Delete Employee
+    </button>
+
+    <button *ngIf="selectedEmployee && !selectedEmployee.isActive" (click)="restoreEmployee()">
+      Restore Employee
+    </button>
 
     <hr>
 
@@ -37,6 +55,7 @@
           <th>ID</th>
           <th>Name</th>
           <th>Department</th>
+          <th>Status</th>
           <th>Phone</th>
           <th>Personal Email</th>
           <th>Office Email</th>
@@ -48,24 +67,32 @@
           <td>
             <input type="radio" name="selected" (change)="selectEmployee(emp)">
           </td>
+
           <td>{{emp?.empId}}</td>
           <td>{{emp?.empName}}</td>
           <td>{{emp?.designation}}</td>
+
+          <!-- ✅ STATUS -->
+          <td>
+            <span [ngClass]="emp?.isActive ? 'active' : 'inactive'">
+              {{ emp?.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+
           <td>{{emp?.phoneNo}}</td>
           <td>{{emp?.personalEmail}}</td>
           <td>{{emp?.officeEmail}}</td>
         </tr>
 
-        <!-- ❗ Empty state -->
         <tr *ngIf="filteredEmployees.length === 0">
-          <td colspan="7" style="text-align:center; padding:20px;">
+          <td colspan="8" style="text-align:center; padding:20px;">
             No Employees Found
           </td>
         </tr>
       </tbody>
     </table>
 
-    <!-- 🔥 PAGINATION YAHAN ADD KIYA -->
+    <!-- 🔥 PAGINATION -->
     <div class="pagination">
 
       <button (click)="prevPage()" [disabled]="currentPage === 0">
@@ -83,35 +110,6 @@
       </button>
 
     </div>
-
-  </div>
-</div>
-
-<!-- 🔥 POPUP -->
-<div class="modal" *ngIf="showForm">
-  <div class="modal-box">
-
-    <h3>{{isEdit ? 'Update' : 'Add'}} Employee</h3>
-
-    <input [(ngModel)]="formData.empId" placeholder="Employee ID">
-    <input [(ngModel)]="formData.empName" placeholder="Name">
-
-    <select [(ngModel)]="formData.designation">
-      <option value="">Select Department</option>
-      <option>HR</option>
-      <option>IT</option>
-      <option>Finance</option>
-      <option>Operations</option>
-      <option>Sales</option>
-      <option>Admin</option>
-    </select>
-
-    <input [(ngModel)]="formData.personalEmail" placeholder="Personal Email">
-    <input [(ngModel)]="formData.officeEmail" placeholder="Office Email">
-    <input [(ngModel)]="formData.phoneNo" placeholder="Phone Number">
-
-    <button (click)="saveEmployee()">Save</button>
-    <button (click)="closeForm()">Cancel</button>
 
   </div>
 </div>

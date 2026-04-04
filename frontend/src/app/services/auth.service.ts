@@ -20,4 +20,7 @@ export class AuthService {
   signup(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/signup`, data);
   }
+  logout() {
+  localStorage.removeItem('token'); // future ke liye
+}
 }

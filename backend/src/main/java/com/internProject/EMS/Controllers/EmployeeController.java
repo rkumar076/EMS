@@ -1,7 +1,6 @@
 package com.internProject.EMS.Controllers;
 
 import java.util.List;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,12 +16,12 @@ import com.internProject.EMS.Repository.EmployeeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-// 🔥 PDF IMPORTS
+// PDF
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.*;
 import com.itextpdf.layout.element.*;
 
-   // exl Imports
+// Excel
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -36,26 +35,36 @@ public class EmployeeController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    // ✅ GET ALL + FILTER + PAGINATION
-    @GetMapping
-    public Page<Employee> getEmployees(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String designation) {
+    // ✅ GET ALL (ONLY ACTIVE) + FILTER + PAGINATION
+@GetMapping
+public Page<Employee> getEmployees(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false) String designation) {
 
-        Pageable pageable = PageRequest.of(page, size);
+    Pageable pageable = PageRequest.of(page, size);
 
-        if (designation != null && !designation.isEmpty()) {
-            return employeeRepository
-                    .findByDesignationContainingIgnoreCase(designation, pageable);
-        } else {
-            return employeeRepository.findAll(pageable);
-        }
+    // 🔥 SAFE CHECK (important)
+    if (designation != null && !designation.trim().isEmpty()) {
+
+        String search = designation.trim(); // remove extra spaces
+
+        return employeeRepository
+                .findByDesignationContainingIgnoreCaseAndIsActiveTrue(search, pageable);
     }
 
-    // ✅ ADD
+    return employeeRepository.findByIsActiveTrue(pageable);
+}
+    // ✅ GET INACTIVE EMPLOYEES
+    @GetMapping("/inactive")
+    public List<Employee> getInactiveEmployees() {
+        return employeeRepository.findByIsActiveFalse();
+    }
+
+    // ✅ ADD (DEFAULT ACTIVE)
     @PostMapping
     public Employee addEmployee(@RequestBody Employee employee) {
+        employee.setIsActive(true); // ensure active
         return employeeRepository.save(employee);
     }
 
@@ -64,7 +73,8 @@ public class EmployeeController {
     public Employee updateEmployee(@PathVariable int id,
                                    @RequestBody Employee emp) {
 
-        Employee existing = employeeRepository.findById(id).orElseThrow();
+        Employee existing = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         existing.setEmpName(emp.getEmpName());
         existing.setDesignation(emp.getDesignation());
@@ -76,30 +86,43 @@ public class EmployeeController {
         return employeeRepository.save(existing);
     }
 
-    // ✅ DELETE
+    // ✅ SOFT DELETE (IMPORTANT 🔥)
     @DeleteMapping("/{id}")
     public void deleteEmployee(@PathVariable int id) {
-        employeeRepository.deleteById(id);
+
+        Employee emp = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        emp.setIsActive(false); // 👈 soft delete
+        employeeRepository.save(emp);
     }
 
-    // 🔥 PDF EXPORT
+    // ✅ RESTORE EMPLOYEE (BONUS 🔥)
+    @PutMapping("/restore/{id}")
+    public void restoreEmployee(@PathVariable int id) {
+        Employee emp = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        emp.setIsActive(true);
+        employeeRepository.save(emp);
+    }
+
+    // 🔥 PDF EXPORT (ONLY ACTIVE)
     @GetMapping("/pdf")
     public void generatePdf(HttpServletResponse response) throws Exception {
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
 
-        List<Employee> employees = employeeRepository.findAll();
+        List<Employee> employees = employeeRepository.findByIsActiveTrue();
 
         PdfWriter writer = new PdfWriter(response.getOutputStream());
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
 
-        // 🔥 Title
         document.add(new Paragraph("Employee List\n\n"));
 
-        // 🔥 Table (6 columns)
-com.itextpdf.layout.element.Table table = new com.itextpdf.layout.element.Table(6);
+        Table table = new Table(6);
 
         table.addCell("ID");
         table.addCell("Name");
@@ -120,74 +143,69 @@ com.itextpdf.layout.element.Table table = new com.itextpdf.layout.element.Table(
         document.add(table);
         document.close();
     }
-    
-    
 
-@GetMapping("/excel")
-public void exportToExcel(HttpServletResponse response) throws Exception {
+    // 🔥 EXCEL EXPORT (ONLY ACTIVE)
+    @GetMapping("/excel")
+    public void exportToExcel(HttpServletResponse response) throws Exception {
 
-    List<Employee> employees = employeeRepository.findAll();
+        List<Employee> employees = employeeRepository.findByIsActiveTrue();
 
-    Workbook workbook = new XSSFWorkbook();
-    Sheet sheet = workbook.createSheet("Employees");
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Employees");
 
-    // Header
-    Row headerRow = sheet.createRow(0);
-    String[] columns = {"ID", "Name", "Department", "Phone", "Personal Email", "Office Email"};
+        Row headerRow = sheet.createRow(0);
+        String[] columns = {"ID", "Name", "Department", "Phone", "Personal Email", "Office Email"};
 
-    for (int i = 0; i < columns.length; i++) {
-        headerRow.createCell(i).setCellValue(columns[i]);
+        for (int i = 0; i < columns.length; i++) {
+            headerRow.createCell(i).setCellValue(columns[i]);
+        }
+
+        int rowNum = 1;
+        for (Employee emp : employees) {
+            Row row = sheet.createRow(rowNum++);
+
+            row.createCell(0).setCellValue(emp.getEmpId());
+            row.createCell(1).setCellValue(emp.getEmpName());
+            row.createCell(2).setCellValue(emp.getDesignation());
+            row.createCell(3).setCellValue(emp.getPhoneNo());
+            row.createCell(4).setCellValue(emp.getPersonalEmail());
+            row.createCell(5).setCellValue(emp.getOfficeEmail());
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=employees.xlsx");
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
-    // Data
-    int rowNum = 1;
-    for (Employee emp : employees) {
-        Row row = sheet.createRow(rowNum++);
+    // ✅ IMAGE UPLOAD
+    @PostMapping("/upload/{id}")
+    public Employee uploadImage(
+            @PathVariable int id,
+            @RequestParam("file") MultipartFile file) throws Exception {
 
-        row.createCell(0).setCellValue(emp.getEmpId());
-        row.createCell(1).setCellValue(emp.getEmpName());
-        row.createCell(2).setCellValue(emp.getDesignation());
-        row.createCell(3).setCellValue(emp.getPhoneNo());
-        row.createCell(4).setCellValue(emp.getPersonalEmail());
-        row.createCell(5).setCellValue(emp.getOfficeEmail());
+        Employee emp = employeeRepository.findById(id).orElseThrow();
+
+        String uploadDir = "uploads/";
+        File folder = new File(uploadDir);
+
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
+
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+        Files.copy(
+                file.getInputStream(),
+                Paths.get(uploadDir + fileName),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+        );
+
+        String imageUrl = "http://localhost:8080/uploads/" + fileName;
+
+        emp.setImage(imageUrl);
+
+        return employeeRepository.save(emp);
     }
-
-    // 🔥 IMPORTANT (LAST में करना है)
-    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    response.setHeader("Content-Disposition", "attachment; filename=employees.xlsx");
-
-    workbook.write(response.getOutputStream());
-    workbook.close();
-}
-
-
-@PostMapping("/upload/{id}")
-public Employee uploadImage(
-        @PathVariable int id,
-        @RequestParam("file") MultipartFile file) throws Exception {
-
-    Employee emp = employeeRepository.findById(id).orElseThrow();
-
-    String uploadDir = "uploads/";
-    File folder = new File(uploadDir);
-
-    if (!folder.exists()) {
-        folder.mkdir();
-    }
-
-    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
-    Files.copy(
-        file.getInputStream(),
-        Paths.get(uploadDir + fileName),
-        java.nio.file.StandardCopyOption.REPLACE_EXISTING
-    );
-
-    String imageUrl = "http://localhost:8080/uploads/" + fileName;
-
-    emp.setImage(imageUrl);
-
-    return employeeRepository.save(emp);
-}
-    
 }

@@ -1,5 +1,7 @@
 package com.internProject.EMS.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -9,7 +11,9 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int empId;
-
+    @Column(name = "is_active")
+    @JsonProperty("isActive")  
+    private boolean isActive = true;
     private String empName;
     private String designation;
     private int empSalary;
@@ -21,6 +25,13 @@ public class Employee {
     // 🔥 MUST: getters & setters manually
     public String getImage() {
     return image;
+}
+public boolean getIsActive() {
+    return isActive;
+}
+
+public void setIsActive(boolean isActive) {
+    this.isActive = isActive;
 }
 
 public void setImage(String image) {
