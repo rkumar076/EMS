@@ -12,6 +12,8 @@
     </ul>
 
     <hr>
+    
+
 
     <!-- 🔥 DYNAMIC DEPARTMENT FILTER -->
     <ul>
@@ -110,6 +112,32 @@
       </button>
 
     </div>
+    
 
   </div>
+  <!-- 🔥 MODAL (ADD / UPDATE FORM) -->
+<div class="modal" *ngIf="showForm">
+  <div class="modal-box">
+
+    <h3>{{ isEdit ? 'Update' : 'Add' }} Employee</h3>
+
+    <input [(ngModel)]="formData.empId" name="empId" placeholder="Employee ID">
+
+    <input [(ngModel)]="formData.empName" name="empName" placeholder="Name">
+
+    <select [(ngModel)]="formData.designation" name="designation">
+      <option value="">Select Department</option>
+      <option *ngFor="let dept of departments">{{ dept }}</option>
+    </select>
+
+    <input [(ngModel)]="formData.personalEmail" name="personalEmail" placeholder="Personal Email">
+    <input [(ngModel)]="formData.officeEmail" name="officeEmail" placeholder="Office Email">
+    <input [(ngModel)]="formData.phoneNo" name="phoneNo" placeholder="Phone Number">
+
+    <button type="button" (click)="saveEmployee()">Save</button>
+    <button type="button" (click)="closeForm()">Cancel</button>
+
+  </div>
+</div>
+
 </div>

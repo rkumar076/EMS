@@ -170,3 +170,105 @@ tbody tr:hover {
   border-radius: 20px;
   font-size: 12px;
 }
+/* 🔥 MODAL OVERLAY */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+  backdrop-filter: blur(4px); /* 🔥 glass effect */
+}
+
+/* 🪟 MODAL BOX */
+.modal-box {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  width: 340px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  animation: scaleIn 0.3s ease;
+}
+
+/* 🔥 Animation */
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 📝 Heading */
+.modal-box h3 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #2c3e50;
+}
+
+/* 🔹 Inputs */
+.modal-box input,
+.modal-box select {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+
+  border-radius: 8px;
+  border: 1px solid #ccc;
+
+  outline: none;
+  transition: 0.3s;
+}
+
+/* 🔥 Focus effect */
+.modal-box input:focus,
+.modal-box select:focus {
+  border-color: #1abc9c;
+  box-shadow: 0 0 5px rgba(26, 188, 156, 0.5);
+}
+
+/* 🔘 Buttons */
+.modal-box button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* ✅ Save button */
+.modal-box button:first-of-type {
+  background: #1abc9c;
+  color: white;
+}
+
+.modal-box button:first-of-type:hover {
+  background: #16a085;
+}
+
+/* ❌ Cancel button */
+.modal-box button:last-of-type {
+  background: #e74c3c;
+  color: white;
+}
+
+.modal-box button:last-of-type:hover {
+  background: #c0392b;
+}

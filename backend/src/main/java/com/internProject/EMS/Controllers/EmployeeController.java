@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.*;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.Table;
 
 // Excel
 import org.apache.poi.ss.usermodel.*;
@@ -108,8 +109,10 @@ public Page<Employee> getEmployees(
     }
 
     // 🔥 PDF EXPORT (ONLY ACTIVE)
-    @GetMapping("/pdf")
-    public void generatePdf(HttpServletResponse response) throws Exception {
+   @GetMapping("/pdf")
+public void generatePdf(HttpServletResponse response) {
+
+    try {
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=employees.pdf");
@@ -122,7 +125,9 @@ public Page<Employee> getEmployees(
 
         document.add(new Paragraph("Employee List\n\n"));
 
-        Table table = new Table(6);
+        // 🔥 FIXED TABLE
+        float[] columnWidths = {1, 3, 3, 3, 4, 4};
+        Table table = new Table(columnWidths);
 
         table.addCell("ID");
         table.addCell("Name");
@@ -132,18 +137,22 @@ public Page<Employee> getEmployees(
         table.addCell("Office Email");
 
         for (Employee emp : employees) {
+
             table.addCell(String.valueOf(emp.getEmpId()));
-            table.addCell(emp.getEmpName());
-            table.addCell(emp.getDesignation());
-            table.addCell(emp.getPhoneNo());
-            table.addCell(emp.getPersonalEmail());
-            table.addCell(emp.getOfficeEmail());
+            table.addCell(emp.getEmpName() != null ? emp.getEmpName() : "");
+            table.addCell(emp.getDesignation() != null ? emp.getDesignation() : "");
+            table.addCell(emp.getPhoneNo() != null ? emp.getPhoneNo() : "");
+            table.addCell(emp.getPersonalEmail() != null ? emp.getPersonalEmail() : "");
+            table.addCell(emp.getOfficeEmail() != null ? emp.getOfficeEmail() : "");
         }
 
         document.add(table);
         document.close();
-    }
 
+    } catch (Exception e) {
+        e.printStackTrace(); // 🔥 VERY IMPORTANT
+    }
+}
     // 🔥 EXCEL EXPORT (ONLY ACTIVE)
     @GetMapping("/excel")
     public void exportToExcel(HttpServletResponse response) throws Exception {
