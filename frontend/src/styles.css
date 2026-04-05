@@ -5,32 +5,29 @@
   box-sizing: border-box;
 }
 
-/* 🌍 BODY */
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f7fa;
   color: #333;
 }
 
-/* 📦 CONTAINER (reuse everywhere) */
 .container {
   width: 90%;
   max-width: 1200px;
   margin: auto;
 }
 
-/* 🔤 HEADINGS */
 h1, h2, h3, h4 {
   font-weight: 600;
 }
 
-/* 🔗 LINKS */
 a {
   text-decoration: none;
   color: inherit;
 }
 
-/* 🧾 BUTTON */
+
 button {
   padding: 8px 14px;
   border: none;
@@ -45,7 +42,6 @@ button:hover {
   background: #138d75;
 }
 
-/* 📋 TABLE (employee list ke liye) */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -78,7 +74,7 @@ input {
   margin-top: 10px;
 }
 
-/* 📦 CARD (dashboard ke liye) */
+
 .card {
   background: white;
   border-radius: 10px;
@@ -87,7 +83,7 @@ input {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* 📊 GRID */
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -95,7 +91,7 @@ input {
   margin-top: 20px;
 }
 
-/* 🏆 HIGHLIGHT BOX */
+
 .highlight {
   background: white;
   padding: 20px;

@@ -1,12 +1,19 @@
-/* full page layout fix */
-
+/* 🔥 FULL PAGE */
 :host {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* 🔥 MAIN CONTENT */
 .main-content {
   flex: 1;
-  padding: 10px 0;
+  padding: 20px;
+}
+
+/* 🔥 CONTAINER (use inside HTML, not force globally) */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
 }

@@ -187,25 +187,35 @@ filterByDept(dept: string) {
   // ============================
   // 💾 SAVE
   // ============================
-  saveEmployee() {
+saveEmployee() {
 
-    if (this.isEdit) {
-      this.http.put(`${this.apiUrl}/${this.formData.empId}`, this.formData)
-        .subscribe(() => {
-          alert('Updated ✅');
-          this.getEmployees();
-          this.closeForm();
-        });
-    } else {
-      this.http.post(this.apiUrl, this.formData)
-        .subscribe(() => {
-          alert('Added ✅');
-          this.getEmployees();
-          this.closeForm();
-        });
-    }
+  // extra safety validation
+  if (!this.formData.empName || !this.formData.phoneNo) {
+    alert("Fill all fields correctly");
+    return;
   }
 
+  // 🔥 remove empId for new record (auto increment)
+  if (!this.isEdit) {
+    delete this.formData.empId;
+  }
+
+  if (this.isEdit) {
+    this.http.put(`${this.apiUrl}/${this.formData.empId}`, this.formData)
+      .subscribe(() => {
+        alert('Updated ✅');
+        this.getEmployees();
+        this.closeForm();
+      });
+  } else {
+    this.http.post(this.apiUrl, this.formData)
+      .subscribe(() => {
+        alert('Added ✅');
+        this.getEmployees();
+        this.closeForm();
+      });
+  }
+}
   // ============================
   // ❌ DELETE (SOFT)
   // ============================

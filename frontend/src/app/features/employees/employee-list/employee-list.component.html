@@ -61,6 +61,7 @@
           <th>Phone</th>
           <th>Personal Email</th>
           <th>Office Email</th>
+
         </tr>
       </thead>
 
@@ -84,6 +85,7 @@
           <td>{{emp?.phoneNo}}</td>
           <td>{{emp?.personalEmail}}</td>
           <td>{{emp?.officeEmail}}</td>
+          
         </tr>
 
         <tr *ngIf="filteredEmployees.length === 0">
@@ -115,29 +117,101 @@
     
 
   </div>
-  <!-- 🔥 MODAL (ADD / UPDATE FORM) -->
-<div class="modal" *ngIf="showForm">
-  <div class="modal-box">
+  
+  <div class="modal" *ngIf="showForm">
+      <div class="modal-box">
+<form #empForm="ngForm">
 
-    <h3>{{ isEdit ? 'Update' : 'Add' }} Employee</h3>
+  <!-- EMP ID (only number) -->
+  <input 
+    [(ngModel)]="formData.empId" 
+    name="empId" 
+    placeholder="Employee ID"
+    required
+    pattern="[0-9]+"
+    #empId="ngModel">
 
-    <input [(ngModel)]="formData.empId" name="empId" placeholder="Employee ID">
+  <small *ngIf="empId.invalid && empId.touched">
+    Only numbers allowed
+  </small>
 
-    <input [(ngModel)]="formData.empName" name="empName" placeholder="Name">
 
-    <select [(ngModel)]="formData.designation" name="designation">
-      <option value="">Select Department</option>
-      <option *ngFor="let dept of departments">{{ dept }}</option>
-    </select>
+  <!-- NAME (start with alphabet) -->
+  <input 
+    [(ngModel)]="formData.empName" 
+    name="empName" 
+    placeholder="Name"
+    required
+    pattern="^[A-Za-z][A-Za-z ]*$"
+    #empName="ngModel">
 
-    <input [(ngModel)]="formData.personalEmail" name="personalEmail" placeholder="Personal Email">
-    <input [(ngModel)]="formData.officeEmail" name="officeEmail" placeholder="Office Email">
-    <input [(ngModel)]="formData.phoneNo" name="phoneNo" placeholder="Phone Number">
+  <small *ngIf="empName.invalid && empName.touched">
+    Name must start with alphabet
+  </small>
 
-    <button type="button" (click)="saveEmployee()">Save</button>
-    <button type="button" (click)="closeForm()">Cancel</button>
 
-  </div>
+  <!-- DESIGNATION -->
+  <select [(ngModel)]="formData.designation" name="designation" required #dept="ngModel">
+    <option value="">Select Department</option>
+    <option *ngFor="let dept of departments">{{ dept }}</option>
+  </select>
+
+  <small *ngIf="dept.invalid && dept.touched">
+    Please select department
+  </small>
+
+
+  <!-- PERSONAL EMAIL -->
+  <input 
+    [(ngModel)]="formData.personalEmail" 
+    name="personalEmail" 
+    placeholder="Personal Email"
+    required
+    pattern="^[a-zA-Z0-9._%+-]+@(gmail|yahoo|outlook)\.com$"
+    #pEmail="ngModel">
+
+  <small *ngIf="pEmail.invalid && pEmail.touched">
+    Use gmail/yahoo/outlook
+  </small>
+
+
+  <!-- OFFICE EMAIL -->
+  <input 
+    [(ngModel)]="formData.officeEmail" 
+    name="officeEmail" 
+    placeholder="Office Email"
+    required
+    pattern="^[a-zA-Z0-9._%+-]+@company\.com$"
+    #oEmail="ngModel">
+
+  <small *ngIf="oEmail.invalid && oEmail.touched">
+    Must be &#64;company.com 
+  </small>
+
+
+  <!-- PHONE NUMBER -->
+  <input 
+    [(ngModel)]="formData.phoneNo" 
+    name="phoneNo" 
+    placeholder="Phone Number"
+    required
+    pattern="^[6-9][0-9]{9}$"
+    #phone="ngModel">
+
+  <small *ngIf="phone.invalid && phone.touched">
+    Must be 10 digit & start with 6-9
+  </small>
+
+
+  <!-- BUTTON -->
+  <button type="button" (click)="saveEmployee()" [disabled]="empForm.invalid">
+    Save
+  </button>
+
+  <button type="button" (click)="closeForm()">Cancel</button>
+
+</form>
+</div>
 </div>
 
 </div>
